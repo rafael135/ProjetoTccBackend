@@ -1,0 +1,6 @@
+@ProjetoTccBackend_HostAddress = http://localhost:5172
+
+GET {{ProjetoTccBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
