@@ -11,7 +11,7 @@ namespace ProjetoTccBackend.Database
     {
         private IConfiguration _configuration;
 
-        public TccDbContext(DbContextOptions options, IConfiguration configuration) : base(options)
+        public TccDbContext(IConfiguration configuration) : base()
         {
             this._configuration = configuration;
         }

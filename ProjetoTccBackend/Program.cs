@@ -21,12 +21,13 @@ namespace ProjetoTccBackend
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             builder.Services.AddDbContext<TccDbContext>();
             builder.Services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<TccDbContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddTransient<ILogger>();
+            //builder.Services.AddTransient<ILogger>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITokenService, TokenService>();

@@ -8,12 +8,12 @@ namespace ProjetoTccBackend.Middlewares
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        //private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+        public ExceptionHandlingMiddleware(RequestDelegate next)
         {
             this._next = next;
-            this._logger = logger;
+            //this._logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -43,7 +43,7 @@ namespace ProjetoTccBackend.Middlewares
             }
             catch (Exception ex)
             {
-                this._logger.LogError(ex, "Erro insperado");
+                //this._logger.LogError(ex, "Erro insperado");
 
                 // Caso seja erro de ModelState inválido
                 if(context.Request.HasFormContentType || IsJsonRequest(context))
