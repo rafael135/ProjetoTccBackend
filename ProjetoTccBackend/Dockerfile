@@ -6,6 +6,8 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+# Porta do Banco de Dados
+EXPOSE 3306
 
 
 # Esta fase é usada para compilar o projeto de serviço
