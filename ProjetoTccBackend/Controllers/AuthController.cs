@@ -9,6 +9,9 @@ using ProjetoTccBackend.Database.Responses;
 
 namespace ProjetoTccBackend.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela autenticação de usuários.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -17,6 +20,12 @@ namespace ProjetoTccBackend.Controllers
         private readonly IUserService _userService;
         private readonly ILogger<AuthController> _logger;
 
+        /// <summary>
+        /// Construtor do AuthController.
+        /// </summary>
+        /// <param name="tokenService">Serviço de geração de token.</param>
+        /// <param name="userService">Serviço de gerenciamento de usuários.</param>
+        /// <param name="logger">Logger para registrar informações e erros.</param>
         public AuthController(ITokenService tokenService, IUserService userService, ILogger<AuthController> logger)
         {
             this._tokenService = tokenService;
@@ -24,8 +33,11 @@ namespace ProjetoTccBackend.Controllers
             this._logger = logger;
         }
 
-
-
+        /// <summary>
+        /// Registra um novo usuário.
+        /// </summary>
+        /// <param name="request">Dados do usuário a ser registrado.</param>
+        /// <returns>Retorna o usuário registrado e o token JWT.</returns>
         [HttpPost("register")]
         [ValidateModelState] // Valida o modelState do request recebido e retorna possíveis erros
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
@@ -33,8 +45,8 @@ namespace ProjetoTccBackend.Controllers
             var user = await this._userService.RegisterUser(request);
 
             string jwtToken = this._tokenService.GenerateToken(user);
-            
-            UserRegisterResponse userResponse = new UserRegisterResponse()
+
+            UserResponse userResponse = new UserResponse()
             {
                 Id = user.Id,
                 Email = user.Email!,
@@ -52,22 +64,36 @@ namespace ProjetoTccBackend.Controllers
             });
         }
 
+
+        /// <summary>
+        /// Autentica um usuário existente.
+        /// </summary>
+        /// <param name="request">Dados do usuário para login.</param>
+        /// <returns>Retorna o usuário autenticado e o token JWT.</returns>
         [HttpPost("login")]
         [ValidateModelState]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest request)
         {
-            var user = await this._userService.LoginUser(request);
+            User user = await this._userService.LoginUser(request);
 
-            if (user is null)
+            UserResponse userResponse = new UserResponse()
             {
-                return BadRequest(
-                    error: new {
-                        
-                    }
-                );   
-            }
+                Id = user.Id,
+                Email = user.Email!,
+                EmailConfirmed = user.EmailConfirmed,
+                UserName = user.UserName!,
+                JoinYear = user.JoinYear,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed
+            };
 
-            return Ok(user);
+            string jwtToken = this._tokenService.GenerateToken(user);
+
+            return Ok(new
+            {
+                user = userResponse,
+                token = jwtToken
+            });
         }
     }
 }

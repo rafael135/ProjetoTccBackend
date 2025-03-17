@@ -79,7 +79,7 @@ public class UserService : IUserService
         return newUser;
     }
 
-    public async Task<User?> LoginUser(LoginUserRequest usr)
+    public async Task<User> LoginUser(LoginUserRequest usr)
     {
         //Console.WriteLine($"{dto.Email}, {dto.Password}");
 
@@ -90,14 +90,20 @@ public class UserService : IUserService
 
         if (existentUser == null)
         {
-            return null;
+            throw new FormException(new Dictionary<string, string>
+            {
+                { "form", "Email e/ou senha incorreto(s)" }
+            });
         }
 
         SignInResult result = await this._signInManager.PasswordSignInAsync(existentUser, usr.Password, false, false);
 
         if (result.Succeeded == false)
         {
-            return null;
+            throw new FormException(new Dictionary<string, string>
+            {
+                { "form", "Email e/ou senha incorreto(s)" }
+            });
         }
 
         return existentUser;

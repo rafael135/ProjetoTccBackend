@@ -2,27 +2,27 @@
 
 namespace ProjetoTccBackend.Database.Responses
 {
-    public class UserRegisterResponse
+    public class UserResponse
     {
         [JsonPropertyName("id")]
-        public string Id;
+        public string Id { get; set; }
 
         [JsonPropertyName("userName")]
-        public string UserName;
+        public string UserName { get; set; }
 
         [JsonPropertyName("email")]
-        public string Email;
+        public string Email { get; set; }
 
         [JsonPropertyName("emailConfirmed")]
-        public bool EmailConfirmed;
+        public bool EmailConfirmed { get; set; }
 
         [JsonPropertyName("joinYear")]
-        public int JoinYear;
+        public int JoinYear { get; set; }
 
         [JsonPropertyName("phoneNumber")]
-        public string? PhoneNumber;
+        public string? PhoneNumber { get; set; }
 
         [JsonPropertyName("phoneNumberConfirmed")]
-        public bool PhoneNumberConfirmed;
+        public bool PhoneNumberConfirmed { get; set; }
     }
 }
