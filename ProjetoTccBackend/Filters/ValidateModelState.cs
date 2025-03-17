@@ -7,13 +7,14 @@ namespace ProjetoTccBackend.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if(context.ModelState.IsValid is false)
+            if (!context.ModelState.IsValid)
             {
-                var errors = context.ModelState.Keys
-                    .SelectMany(key => context.ModelState[key]!.Errors.Select(x => new { field = key, error = x.ErrorMessage }))
+                var errors = context.ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value.Errors.Select(e => new { field = x.Key, error = e.ErrorMessage }))
                     .ToList();
 
-                context.Result = new BadRequestObjectResult(new { errors });
+                context.HttpContext.Items["ModelStateErrors"] = errors;
             }
         }
     }

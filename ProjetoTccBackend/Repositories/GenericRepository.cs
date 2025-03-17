@@ -6,7 +6,7 @@ namespace ProjetoTccBackend.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly TccDbContext _dbContext;
+        protected readonly TccDbContext _dbContext;
 
         public GenericRepository(TccDbContext dbContext)
         {

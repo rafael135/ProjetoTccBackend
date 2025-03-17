@@ -1,8 +1,11 @@
 ﻿using ProjetoTccBackend.Database.Requests;
 using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Services.Interfaces;
+using ProjetoTccBackend.Exceptions;
 //using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using ProjetoTccBackend.Repositories.Interfaces;
 
 namespace ApiEstoqueASP.Services;
 
@@ -10,12 +13,16 @@ public class UserService : IUserService
 {
     //private IMapper _mapper;
     private UserManager<User> _userManager;
+    private readonly IUserRepository _userRepository;
     private SignInManager<User> _signInManager;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(UserManager<User> userManager, SignInManager<User> signInManager)
+    public UserService(UserManager<User> userManager, IUserRepository userRepository, SignInManager<User> signInManager, ILogger<UserService> logger)
     {
         this._userManager = userManager;
+        this._userRepository = userRepository;
         this._signInManager = signInManager;
+        _logger = logger;
     }
 
     public async Task<User?> RegisterUser(RegisterUserRequest user)
@@ -23,11 +30,15 @@ public class UserService : IUserService
         //User user = this._mapper.Map<User>(dto);
 
         // Checa se o email existe
-        User? emailExists = _userManager.Users.Where(usr => usr.NormalizedEmail == user.Email.ToUpper()).FirstOrDefault();
+        User? existentUser = this._userRepository.GetByEmail(user.Email);
 
-        if (emailExists is not null)
+        if (existentUser is not null)
         {
-            return null;
+            this._logger.LogError(existentUser.Id);
+            throw new FormException(new Dictionary<string, string>()
+            {
+                { "email", """E-mail já utilizado""" }
+            });
         }
 
         User newUser = new User
@@ -35,24 +46,34 @@ public class UserService : IUserService
             UserName = user.UserName,
             Email = user.Email,
             JoinYear = user.JoinYear,
+            EmailConfirmed = false,
+            PhoneNumberConfirmed = false,
+            TwoFactorEnabled = false,
         };
 
         IdentityResult result = await _userManager.CreateAsync(newUser, user.Password);
 
-        await _signInManager.UserManager.AddClaimAsync(newUser, new System.Security.Claims.Claim("Role", "User"));
-
-
         if (result.Succeeded == false)
         {
-            return null;
+            this._logger.LogDebug(result.Errors.Count().ToString());
+            throw new FormException(new Dictionary<string, string>
+            {
+                { "Error", result.Errors.First().Code }
+            });
         }
 
+        await this._userManager.UpdateAsync(newUser);
+        await _signInManager.UserManager.AddClaimAsync(newUser, new Claim(ClaimTypes.Role, "User"));
+
         // Adiciono o usuário registrado ao role "User"
-        IdentityResult res = await this._userManager.AddToRoleAsync(newUser, "User");
+        IdentityResult res = await this._userManager.AddToRoleAsync(newUser, "Student");
 
         if (res.Succeeded == false)
         {
-            return null;
+            throw new FormException(new Dictionary<string, string>
+            {
+                { "Error", result.Errors.First().Code }
+            });
         }
 
         return newUser;

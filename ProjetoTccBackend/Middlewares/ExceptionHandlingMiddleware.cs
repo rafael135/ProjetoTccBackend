@@ -8,12 +8,12 @@ namespace ProjetoTccBackend.Middlewares
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        //private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             this._next = next;
-            //this._logger = logger;
+            this._logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -25,13 +25,29 @@ namespace ProjetoTccBackend.Middlewares
             try
             {
                 await _next(context);
+
+                if(context.Response.HasStarted)
+                {
+                    return;
+                }
+
+                if (context.Items.ContainsKey("ModelStateErrors"))
+                {
+                    isFormException = true;
+                    response = context.Items["ModelStateErrors"];
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.ContentType = "application/json";
+                    
+                }
             }
             catch (ErrorException ex) // Erro genérico lançado manualmente no código
             {
+                this._logger.LogError("Error");
                 response = new { message = ex.Message };
             }
             catch (FormException ex) // Erro de validação lançado manualmente
             {
+                this._logger.LogError("Error");
                 isFormException = true;
                 response = new
                 {
@@ -43,7 +59,7 @@ namespace ProjetoTccBackend.Middlewares
             }
             catch (Exception ex)
             {
-                //this._logger.LogError(ex, "Erro insperado");
+                this._logger.LogError(ex, "Erro insperado");
 
                 // Caso seja erro de ModelState inválido
                 if(context.Request.HasFormContentType || IsJsonRequest(context))
@@ -88,6 +104,7 @@ namespace ProjetoTccBackend.Middlewares
 
             if(ex is ValidationException validationEx) // Validação manual foi lançadas
             {
+                
                 errors.AddRange(validationEx.ValidationResult.MemberNames.Select(field => new
                 {
                     field,
@@ -100,6 +117,7 @@ namespace ProjetoTccBackend.Middlewares
             }
             else // Erro inesperado
             {
+                this._logger.LogInformation(JsonSerializer.Serialize(errors));
                 errors.Add(new { field = "general", error = "Ocorreu um erro inesperado. Tente novamente mais tarde." });
             }
 

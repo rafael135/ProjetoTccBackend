@@ -21,6 +21,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.5.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
@@ -30,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="Database\DTO\" />
-    <Folder Include="Database\Responses\" />
   </ItemGroup>
 
 </Project>

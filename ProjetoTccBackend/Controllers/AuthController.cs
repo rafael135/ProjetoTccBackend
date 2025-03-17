@@ -5,6 +5,7 @@ using ProjetoTccBackend.Database.Requests;
 using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Services.Interfaces;
 using ProjetoTccBackend.Exceptions;
+using ProjetoTccBackend.Database.Responses;
 
 namespace ProjetoTccBackend.Controllers
 {
@@ -12,41 +13,46 @@ namespace ProjetoTccBackend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
+        private readonly IUserService _userService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IUserService userService, ITokenService tokenService)
+        public AuthController(ITokenService tokenService, IUserService userService, ILogger<AuthController> logger)
         {
-            this._userService = userService;
             this._tokenService = tokenService;
+            this._userService = userService;
+            this._logger = logger;
         }
 
 
 
-        [HttpPost("/register")]
+        [HttpPost("register")]
         [ValidateModelState] // Valida o modelState do request recebido e retorna possíveis erros
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
         {
             var user = await this._userService.RegisterUser(request);
 
-            if(user is null)
-            {
-                throw new FormException(new Dictionary<string, string>()
-                {
-                    { "email", "E-mail já utilizado" }
-                });
-            }
-
             string jwtToken = this._tokenService.GenerateToken(user);
+            
+            UserRegisterResponse userResponse = new UserRegisterResponse()
+            {
+                Id = user.Id,
+                Email = user.Email!,
+                EmailConfirmed = user.EmailConfirmed,
+                UserName = user.UserName!,
+                JoinYear = user.JoinYear,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed
+            };
 
             return Ok(new
             {
-                user,
+                user = userResponse,
                 token = jwtToken
             });
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         [ValidateModelState]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest request)
         {

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ProjetoTccBackend.Database.Requests
 {
@@ -7,20 +8,25 @@ namespace ProjetoTccBackend.Database.Requests
         [Required]
         [MaxLength(6, ErrorMessage = "RA inválido!")]
         [MinLength(5, ErrorMessage = "RA inválido!")]
-        public required string RA {  get; set; }
+        [JsonPropertyName("ra")]
+        public string RA {  get; set; }
 
         [Required]
         [MaxLength(90, ErrorMessage = "Nome maior que 90 caracteres")]
-        public required string UserName { get; set; }
+        [JsonPropertyName("userName")]
+        public string UserName { get; set; }
 
         [Required]
         [EmailAddress(ErrorMessage = "Email inválido!")]
-        public required string Email { get; set; }
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
 
         [Required]
-        public required int JoinYear { get; set; }
+        [JsonPropertyName("joinYear")]
+        public int JoinYear { get; set; }
         
         [Required]
-        public required string Password { get; set; }
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
     }
 }

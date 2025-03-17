@@ -12,5 +12,11 @@ namespace ProjetoTccBackend.Repositories
         }
 
 
+        public User? GetByEmail(string email)
+        {
+            return this._dbContext.Set<User>().Where(x => x.Email!.ToLower() == email.ToLower()).FirstOrDefault();
+        }
+
+
     }
 }

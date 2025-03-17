@@ -8,5 +8,10 @@
         {
             this.FormData = formData;
         }
+
+        public FormException(IDictionary<string, string> formData, string message) : base(message)
+        {
+            this.FormData = formData;
+        }
     }
 }
