@@ -10,7 +10,13 @@ namespace ProjetoTccBackend.Models
         [StringLength(200)]
         public string Title { get; set; }
 
+        [DataType(DataType.MultilineText)]
+        public string Description { get; set; }
+
+
+        public ICollection<ExerciseInput> ExerciseInputs { get; set; } = [];
+        public ICollection<ExerciseOutput> ExerciseOutputs { get; set; } = [];
         public ICollection<Competition> Competitions { get; set; } = [];
-        public ICollection<ExerciseInCompetition> ExercideInCompetions { get; set; } = [];
+        public ICollection<ExerciseInCompetition> ExerciseInCompetions { get; set; } = [];
     }
 }

@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Pomelo.EntityFrameworkCore.MySql;
-
 using ProjetoTccBackend.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
@@ -15,6 +12,8 @@ namespace ProjetoTccBackend.Database
         public DbSet<Competition> Competitions { get; set; }
         public DbSet<CompetitionRanking> CompetitionRankings { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
+        public DbSet<ExerciseInput> ExerciseInputs { get; set; }
+        public DbSet<ExerciseOutput> ExerciseOutputs { get; set; }
         public DbSet<GroupInCompetition> GroupsInCompetitions { get; set; }
         public DbSet<ExerciseInCompetition> ExercisesInCompetitions { get; set; }
         
@@ -72,6 +71,29 @@ namespace ProjetoTccBackend.Database
                 .HasMany<Exercise>(c => c.Exercices)
                 .WithMany(e => e.Competitions)
                 .UsingEntity<ExerciseInCompetition>();
+
+
+            builder.Entity<ExerciseOutput>()
+                .HasOne(e => e.ExerciseInput)
+                .WithOne(e => e.ExerciseOutput)
+                .HasForeignKey<ExerciseOutput>(e => e.ExerciseInputId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
+
+
+            builder.Entity<Exercise>()
+                .HasMany(e => e.ExerciseInputs)
+                .WithOne(e => e.Exercise)
+                .HasForeignKey(e => e.ExerciseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
+
+            builder.Entity<Exercise>()
+                .HasMany(e => e.ExerciseOutputs)
+                .WithOne(e => e.Exercise)
+                .HasForeignKey(e => e.ExerciseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
 
             
         }

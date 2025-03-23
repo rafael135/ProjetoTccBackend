@@ -4,8 +4,8 @@ using ProjetoTccBackend.Filters;
 using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Services.Interfaces;
 using ProjetoTccBackend.Exceptions;
-using ProjetoTccBackend.Database.Responses;
 using ProjetoTccBackend.Database.Requests.Auth;
+using ProjetoTccBackend.Database.Responses.Auth;
 
 namespace ProjetoTccBackend.Controllers
 {

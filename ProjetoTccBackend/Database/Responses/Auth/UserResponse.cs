@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ProjetoTccBackend.Database.Responses
+namespace ProjetoTccBackend.Database.Responses.Auth
 {
     public class UserResponse
     {
