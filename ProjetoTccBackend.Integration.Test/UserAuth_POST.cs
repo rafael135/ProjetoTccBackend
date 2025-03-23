@@ -1,11 +1,13 @@
 using ProjetoTccBackend.Database.Requests.Auth;
+using ProjetoTccBackend.Integration.Test.DataBuilders;
+using ProjetoTccBackend.Models;
 using System.Net;
 using System.Net.Http.Json;
 using Xunit.Abstractions;
 
 namespace ProjetoTccBackend.Integration.Test
 {
-    public class UserAuth_POST : IClassFixture<TCCWebApplicationFactory>
+    public class UserAuth_POST : IClassFixture<TCCWebApplicationFactory>, IAsyncLifetime
     {
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _output;
@@ -16,7 +18,32 @@ namespace ProjetoTccBackend.Integration.Test
             this._output = output;
         }
 
-        
+        public async Task InitializeAsync()
+        {
+            User newUser = new UserDataBuilder().Generate();
+
+            newUser.Email = "teste@gmail.com";
+            string password = "00000000";
+
+            RegisterUserRequest request = new RegisterUserRequest()
+            {
+                RA = "000000",
+                UserName = "teste",
+                Email = "teste@gmail.com",
+                Password = password,
+                JoinYear = 2020
+            };
+
+            await this._client.PostAsJsonAsync<RegisterUserRequest>("/api/auth/register", request);
+            
+        }
+
+        public async Task DisposeAsync()
+        {
+            
+        }
+
+
         [Theory]
         [InlineData("113937", "teste3", "teste3@gmail.com", "00000000", 2021, HttpStatusCode.OK)]
         [InlineData("113826", "teste4", "teste4@gmail.com", "00000000", 2021, HttpStatusCode.OK)]
@@ -39,8 +66,6 @@ namespace ProjetoTccBackend.Integration.Test
 
             // Assert
             Assert.NotNull(response);
-            string c = await response.Content.ReadAsStringAsync();
-            this._output.WriteLine(c);
             Assert.Equal(expectedStatus, response.StatusCode);
             
         }

@@ -84,10 +84,7 @@ public class UserService : IUserService
     {
         //Console.WriteLine($"{dto.Email}, {dto.Password}");
 
-        User? existentUser = _signInManager
-            .UserManager
-            .Users
-            .FirstOrDefault(user => user.Email!.Equals(usr.Email));
+        User? existentUser = this._userRepository.GetByEmail(usr.Email);
 
         if (existentUser == null)
         {

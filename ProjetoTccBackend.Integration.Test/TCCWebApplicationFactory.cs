@@ -1,88 +1,68 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ProjetoTccBackend.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Testcontainers.MariaDb;
 
 namespace ProjetoTccBackend.Integration.Test
 {
     public class TCCWebApplicationFactory : WebApplicationFactory<ProjetoTccBackend>, IAsyncLifetime
     {
-        public TccDbContext Context { get; private set; }
-
         private readonly MariaDbContainer _dbContainer;
 
         public TCCWebApplicationFactory()
         {
+            // Configuration of the container
             _dbContainer = new MariaDbBuilder()
                 .WithImage("mariadb:latest")
-                .WithDatabase("projetotcc")
+                .WithDatabase("projetotcc_test")
                 .WithUsername("admin")
                 .WithPassword("admin")
-                .WithPortBinding(2642, 3306)
                 .WithCleanUp(true)
                 .Build();
         }
 
+        // Initialize the container
         public async Task InitializeAsync()
         {
-            await this._dbContainer.StartAsync();
+            await _dbContainer.StartAsync();
         }
 
+        // stops and dispose the containers
         public async Task DisposeAsync()
         {
-            await this._dbContainer.DisposeAsync();
+            await _dbContainer.StopAsync();
+            await _dbContainer.DisposeAsync();
         }
 
+        // Configures the WebHost to use the container ConnectionString
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            base.ConfigureWebHost(builder);
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                var connectionString = _dbContainer.GetConnectionString();
+
+                var settings = new Dictionary<string, string>
+                {
+                    { "ConnectionStrings:DefaultConnection", connectionString }
+                };
+
+                config.AddInMemoryCollection(settings); // override the connectionString
+            });
 
             builder.ConfigureServices(services =>
             {
-                builder.ConfigureLogging(logging =>
+                
+                var serviceProvider = services.BuildServiceProvider();
+                using (var scope = serviceProvider.CreateScope())
                 {
-                    logging.SetMinimumLevel(LogLevel.Debug);
-                });
-
-                // Removes existent dbContextOptions
-                var existentDbOptions = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<TccDbContext>));
-
-                if(existentDbOptions is not null)
-                {
-                    services.Remove(existentDbOptions);
+                    var db = scope.ServiceProvider.GetRequiredService<TccDbContext>();
+                    db.Database.EnsureDeleted(); // Ensures the database is empty
+                    db.Database.Migrate(); // Apply migrations
                 }
-
-                // Adds test dbContext
-                services.AddDbContext<TccDbContext>(options =>
-                {
-                    options.UseMySql(
-                        this._dbContainer.GetConnectionString(),
-                        ServerVersion.AutoDetect(this._dbContainer.GetConnectionString())
-                    );
-                });
-
-
-                var sp = services.BuildServiceProvider();
-                var scope = sp.CreateScope();
-
-                var scopedServices = scope.ServiceProvider;
-                var db = scopedServices.GetRequiredService<TccDbContext>();
-
-                // Ensures the database is cleaned for the tests
-                db.Database.EnsureDeleted();
-                db.Database.Migrate();
-                db.Database.EnsureCreated();
-
-                this.Context = db;
-
             });
         }
     }

@@ -27,8 +27,8 @@ namespace ProjetoTccBackend.Database
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(
-                this._configuration.GetConnectionString("mariaDB"),
-                ServerVersion.AutoDetect(this._configuration.GetConnectionString("mariaDB"))
+                this._configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(this._configuration.GetConnectionString("DefaultConnection"))
             );
         }
 
