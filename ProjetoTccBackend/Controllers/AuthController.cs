@@ -1,11 +1,11 @@
 ﻿using ApiEstoqueASP.Services;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoTccBackend.Filters;
-using ProjetoTccBackend.Database.Requests;
 using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Services.Interfaces;
 using ProjetoTccBackend.Exceptions;
 using ProjetoTccBackend.Database.Responses;
+using ProjetoTccBackend.Database.Requests.Auth;
 
 namespace ProjetoTccBackend.Controllers
 {
@@ -42,7 +42,7 @@ namespace ProjetoTccBackend.Controllers
         [ValidateModelState] // Valida o modelState do request recebido e retorna possíveis erros
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
         {
-            var user = await this._userService.RegisterUser(request);
+            var user = await this._userService.RegisterUserAsync(request);
 
             string jwtToken = this._tokenService.GenerateToken(user);
 
@@ -74,7 +74,7 @@ namespace ProjetoTccBackend.Controllers
         [ValidateModelState]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest request)
         {
-            User user = await this._userService.LoginUser(request);
+            User user = await this._userService.LoginUserAsync(request);
 
             UserResponse userResponse = new UserResponse()
             {

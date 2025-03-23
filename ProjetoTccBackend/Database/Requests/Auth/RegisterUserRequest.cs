@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace ProjetoTccBackend.Database.Requests
+namespace ProjetoTccBackend.Database.Requests.Auth
 {
     public class RegisterUserRequest
     {

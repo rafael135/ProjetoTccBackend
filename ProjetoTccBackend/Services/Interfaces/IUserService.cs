@@ -1,11 +1,11 @@
-﻿using ProjetoTccBackend.Database.Requests;
+﻿using ProjetoTccBackend.Database.Requests.Auth;
 using ProjetoTccBackend.Models;
 
 namespace ProjetoTccBackend.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<User> RegisterUser(RegisterUserRequest request);
-        Task<User> LoginUser(LoginUserRequest request);
+        Task<User> RegisterUserAsync(RegisterUserRequest request);
+        Task<User> LoginUserAsync(LoginUserRequest request);
     }
 }

@@ -1,11 +1,11 @@
-﻿using ProjetoTccBackend.Database.Requests;
-using ProjetoTccBackend.Models;
+﻿using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Services.Interfaces;
 using ProjetoTccBackend.Exceptions;
 //using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using ProjetoTccBackend.Repositories.Interfaces;
+using ProjetoTccBackend.Database.Requests.Auth;
 
 namespace ApiEstoqueASP.Services;
 
@@ -25,7 +25,7 @@ public class UserService : IUserService
         _logger = logger;
     }
 
-    public async Task<User?> RegisterUser(RegisterUserRequest user)
+    public async Task<User> RegisterUserAsync(RegisterUserRequest user)
     {
         //User user = this._mapper.Map<User>(dto);
 
@@ -45,6 +45,7 @@ public class UserService : IUserService
         {
             UserName = user.UserName,
             Email = user.Email,
+            RA = user.RA,
             JoinYear = user.JoinYear,
             EmailConfirmed = false,
             PhoneNumberConfirmed = false,
@@ -79,7 +80,7 @@ public class UserService : IUserService
         return newUser;
     }
 
-    public async Task<User> LoginUser(LoginUserRequest usr)
+    public async Task<User> LoginUserAsync(LoginUserRequest usr)
     {
         //Console.WriteLine($"{dto.Email}, {dto.Password}");
 

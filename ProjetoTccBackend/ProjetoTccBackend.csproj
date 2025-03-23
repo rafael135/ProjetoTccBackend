@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <Folder Include="Database\DTO\" />
+    <Folder Include="Database\Requests\Competition\" />
+    <Folder Include="Database\Requests\NovaPasta\" />
   </ItemGroup>
 
 </Project>

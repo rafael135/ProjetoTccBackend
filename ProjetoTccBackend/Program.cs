@@ -15,14 +15,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ProjetoTccBackend
 {
-    public class Program
+    public class ProjetoTccBackend
     {
         /// <summary>
         /// Cria as funções padrão no sistema se elas não existirem.
         /// </summary>
         /// <param name="serviceProvider">Provedor de serviços para obter os gerenciadores de função e usuário.</param>
         /// <returns>Uma tarefa assíncrona.</returns>
-        private static async Task CreateRoles(IServiceProvider serviceProvider)
+        public static async Task CreateRoles(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
@@ -39,6 +39,16 @@ namespace ProjetoTccBackend
                     roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
+        }
+
+        private static void ConfigureWebSocketOptions(WebApplication app)
+        {
+            var options = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromMinutes(2)
+            };
+
+            app.UseWebSockets(options);
         }
 
         public static void Main(string[] args)
@@ -70,6 +80,7 @@ namespace ProjetoTccBackend
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IGroupService, GroupService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -115,6 +126,7 @@ namespace ProjetoTccBackend
 
             //app.UseRouting();
 
+            //ConfigureWebSocketOptions(app);
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 

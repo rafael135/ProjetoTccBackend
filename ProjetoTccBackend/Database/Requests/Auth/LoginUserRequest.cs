@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProjetoTccBackend.Database.Requests
+namespace ProjetoTccBackend.Database.Requests.Auth
 {
     public class LoginUserRequest
     {
