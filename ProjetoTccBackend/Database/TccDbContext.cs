@@ -16,6 +16,7 @@ namespace ProjetoTccBackend.Database
         public DbSet<ExerciseOutput> ExerciseOutputs { get; set; }
         public DbSet<GroupInCompetition> GroupsInCompetitions { get; set; }
         public DbSet<ExerciseInCompetition> ExercisesInCompetitions { get; set; }
+        public DbSet<GroupExerciseAttempt> GroupExerciseAttempts { get; set; }
         
 
         public TccDbContext(IConfiguration configuration) : base()
@@ -95,6 +96,26 @@ namespace ProjetoTccBackend.Database
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(required: true);
 
+            builder.Entity<GroupExerciseAttempt>()
+                .HasOne(g => g.Group)
+                .WithMany(g => g.GroupExerciseAttempts)
+                .HasForeignKey(g => g.GroupId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
+
+            builder.Entity<GroupExerciseAttempt>()
+                .HasOne(g => g.Exercise)
+                .WithMany(e => e.GroupExerciseAttempts)
+                .HasForeignKey(g => g.ExerciseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
+
+            builder.Entity<GroupExerciseAttempt>()
+                .HasOne(g => g.Competition)
+                .WithMany(g => g.GroupExerciseAttempts)
+                .HasForeignKey(g => g.CompetitionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
             
         }
 
