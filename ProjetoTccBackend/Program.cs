@@ -12,6 +12,7 @@ using ProjetoTccBackend.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using ProjetoTccBackend.Middlewares;
 using Microsoft.AspNetCore.Mvc;
+using ProjetoTccBackend.Hubs;
 
 namespace ProjetoTccBackend
 {
@@ -45,7 +46,8 @@ namespace ProjetoTccBackend
         {
             var options = new WebSocketOptions()
             {
-                KeepAliveInterval = TimeSpan.FromMinutes(2)
+                KeepAliveInterval = TimeSpan.FromMinutes(2),
+                AllowedOrigins = { "http://localhost:3000" }
             };
 
             app.UseWebSockets(options);
@@ -76,11 +78,21 @@ namespace ProjetoTccBackend
                 .AddEntityFrameworkStores<TccDbContext>()
                 .AddDefaultTokenProviders();
 
+            // Repositories
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IExerciseInputRepository, ExerciseInputRepository>();
+            builder.Services.AddScoped<IExerciseOutputRepository, ExerciseOutputRepository>();
+            builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+
+            // Services
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
+            builder.Services.AddScoped<IExerciseService, ExerciseService>();
+            builder.Services.AddScoped<IGroupAttemptService, GroupAttemptService>();
+
+            builder.Services.AddSignalR();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -126,7 +138,7 @@ namespace ProjetoTccBackend
 
             //app.UseRouting();
 
-            //ConfigureWebSocketOptions(app);
+            ConfigureWebSocketOptions(app);
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -135,6 +147,7 @@ namespace ProjetoTccBackend
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHub<CompetitionHub>("/hub/competition");
 
             app.Run();
         }

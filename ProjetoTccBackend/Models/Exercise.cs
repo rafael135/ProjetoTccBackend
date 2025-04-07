@@ -12,6 +12,7 @@ namespace ProjetoTccBackend.Models
 
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
+        public TimeSpan EstimatedTime { get; set; }
 
 
         public ICollection<ExerciseInput> ExerciseInputs { get; set; } = [];

@@ -8,6 +8,7 @@ namespace ProjetoTccBackend.Models
         public int Id { get; set; }
         public int ExerciseId { get; set; }
         public Exercise Exercise { get; set; }
+        public TimeSpan Time { get; set; }
         public int CompetitionId { get; set; }
         public Competition Competition { get; set; }
         public int GroupId { get; set; }
