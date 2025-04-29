@@ -17,7 +17,7 @@ namespace ProjetoTccBackend.Database.Responses.Auth
         public bool EmailConfirmed { get; set; }
 
         [JsonPropertyName("joinYear")]
-        public int JoinYear { get; set; }
+        public int? JoinYear { get; set; }
 
         [JsonPropertyName("phoneNumber")]
         public string? PhoneNumber { get; set; }

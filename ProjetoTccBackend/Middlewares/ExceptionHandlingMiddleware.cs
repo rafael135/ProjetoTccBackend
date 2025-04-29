@@ -16,7 +16,7 @@ namespace ProjetoTccBackend.Middlewares
             this._logger = logger;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             bool isFormException = false;
 
@@ -53,7 +53,7 @@ namespace ProjetoTccBackend.Middlewares
                 {
                     errors = ex.FormData.Select(x =>
                     {
-                        return new { field = x.Key, error = x.Value };
+                        return new { target = x.Key, error = x.Value };
                     })
                 };
             }
@@ -73,7 +73,7 @@ namespace ProjetoTccBackend.Middlewares
                     {
                         errors = new[]
                         {
-                            new { field = "general", error = "Ocorreu um erro inesperado. Tente novamente mais tarde." }
+                            new { target = "general", error = "Ocorreu um erro inesperado. Tente novamente mais tarde." }
                         }
                     };
                 }
@@ -105,20 +105,20 @@ namespace ProjetoTccBackend.Middlewares
             if(ex is ValidationException validationEx) // Validação manual foi lançadas
             {
                 
-                errors.AddRange(validationEx.ValidationResult.MemberNames.Select(field => new
+                errors.AddRange(validationEx.ValidationResult.MemberNames.Select(target => new
                 {
-                    field,
+                    target,
                     error = validationEx.ValidationResult.ErrorMessage
                 }));
             }
             else if(ex is ArgumentException argEx) // Erro específico
             {
-                errors.Add(new { field = "general", error = argEx.Message });
+                errors.Add(new { target = "general", error = argEx.Message });
             }
             else // Erro inesperado
             {
                 this._logger.LogInformation(JsonSerializer.Serialize(errors));
-                errors.Add(new { field = "general", error = "Ocorreu um erro inesperado. Tente novamente mais tarde." });
+                errors.Add(new { target = "general", error = "Ocorreu um erro inesperado. Tente novamente mais tarde." });
             }
 
             return new { errors };

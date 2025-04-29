@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoTccBackend.Database.Requests.Exercise;
+using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Services.Interfaces;
 
 namespace ProjetoTccBackend.Controllers
@@ -23,7 +24,14 @@ namespace ProjetoTccBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExerciseById(int id)
         {
-            throw new NotImplementedException();
+            Exercise? exercise = await this._exerciseService.GetExerciseById(id);
+
+            if (exercise == null)
+            {
+                return NotFound(id);
+            }
+
+            return Ok(exercise);
         }
 
 
@@ -31,7 +39,18 @@ namespace ProjetoTccBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewExercise([FromBody] CreateExerciseRequest request)
         {
-            throw new NotImplementedException();
+            Exercise? exercise = await this._exerciseService.CreateExercise(request);
+
+            if (exercise == null)
+            {
+                this._logger.LogDebug("Exercise not created", new
+                {
+                    bodyContent = exercise
+                });
+                return this.BadRequest();
+            }
+
+            return this.CreatedAtAction(nameof(this.GetExerciseById), new { id = exercise.Id }, exercise);
         }
     }
 }

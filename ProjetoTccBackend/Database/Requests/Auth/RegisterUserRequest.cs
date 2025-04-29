@@ -21,9 +21,15 @@ namespace ProjetoTccBackend.Database.Requests.Auth
         [JsonPropertyName("email")]
         public string Email { get; set; }
 
-        [Required]
         [JsonPropertyName("joinYear")]
-        public int JoinYear { get; set; }
+        public int? JoinYear { get; set; }
+
+        [JsonPropertyName("accessCode")]
+        public string? AccessCode { get; set; }
+
+        [JsonPropertyName("role")]
+        public string Role {  get; set; }
+
         
         [Required]
         [JsonPropertyName("password")]

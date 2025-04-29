@@ -35,8 +35,8 @@ namespace ProjetoTccBackend.Services
 
             var inputs = new List<ExerciseInput>();
             var outputs = new List<ExerciseOutput>();
-            
-            foreach(var input in inputsRequest)
+
+            foreach (var input in inputsRequest)
             {
                 inputs.Add(new ExerciseInput()
                 {
@@ -47,7 +47,7 @@ namespace ProjetoTccBackend.Services
 
             this._exerciseInputRepository.AddRange(inputs);
 
-            for(int i = 0; i < outputsRequest.Count; i++)
+            for (int i = 0; i < outputsRequest.Count; i++)
             {
                 outputs.Add(new ExerciseOutput()
                 {
@@ -59,6 +59,12 @@ namespace ProjetoTccBackend.Services
 
             this._exerciseOutputRepository.AddRange(outputs);
 
+            return exercise;
+        }
+
+        public async Task<Exercise?> GetExerciseById(int id)
+        {
+            var exercise = this._exerciseRepository.GetById(id);
             return exercise;
         }
     }

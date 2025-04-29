@@ -16,5 +16,10 @@ namespace ProjetoTccBackend.Hubs
         {
             await Clients.Caller.SendAsync("Pong", new { message = "Pong" });
         }
+
+        public async Task SendExerciseAttempt()
+        {
+
+        }
     }
 }

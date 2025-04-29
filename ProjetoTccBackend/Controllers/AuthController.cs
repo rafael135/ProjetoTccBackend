@@ -39,7 +39,6 @@ namespace ProjetoTccBackend.Controllers
         /// <param name="request">Dados do usuário a ser registrado.</param>
         /// <returns>Retorna o usuário registrado e o token JWT.</returns>
         [HttpPost("register")]
-        [ValidateModelState] // Valida o modelState do request recebido e retorna possíveis erros
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
         {
             var user = await this._userService.RegisterUserAsync(request);
@@ -71,7 +70,6 @@ namespace ProjetoTccBackend.Controllers
         /// <param name="request">Dados do usuário para login.</param>
         /// <returns>Retorna o usuário autenticado e o token JWT.</returns>
         [HttpPost("login")]
-        [ValidateModelState]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest request)
         {
             User user = await this._userService.LoginUserAsync(request);

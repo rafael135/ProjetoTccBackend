@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using ProjetoTccBackend.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoTccBackend.Hubs;
+using ProjetoTccBackend.Filters;
 
 namespace ProjetoTccBackend
 {
@@ -80,6 +81,7 @@ namespace ProjetoTccBackend
 
             // Repositories
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IGroupRepository, GroupRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IExerciseInputRepository, ExerciseInputRepository>();
             builder.Services.AddScoped<IExerciseOutputRepository, ExerciseOutputRepository>();
@@ -94,7 +96,15 @@ namespace ProjetoTccBackend
 
             builder.Services.AddSignalR();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidateModelStateFilter>();
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

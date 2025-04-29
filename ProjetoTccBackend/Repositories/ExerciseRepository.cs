@@ -1,6 +1,7 @@
 ﻿using ProjetoTccBackend.Database;
 using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Repositories.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ProjetoTccBackend.Repositories
 {
