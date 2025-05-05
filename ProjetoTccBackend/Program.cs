@@ -14,6 +14,9 @@ using ProjetoTccBackend.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoTccBackend.Hubs;
 using ProjetoTccBackend.Filters;
+using System.Reflection;
+using ProjetoTccBackend.Swagger.Extensions;
+using ProjetoTccBackend.Swagger.Filters;
 
 namespace ProjetoTccBackend
 {
@@ -61,11 +64,6 @@ namespace ProjetoTccBackend
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
 
-            //builder.Services.Configure<ApiBehaviorOptions>(options =>
-            //{
-            //    options.SuppressModelStateInvalidFilter = true;
-            //});
-
             // Add services to the container.
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             builder.Services.AddDbContext<TccDbContext>();
@@ -87,7 +85,18 @@ namespace ProjetoTccBackend
             builder.Services.AddScoped<IExerciseOutputRepository, ExerciseOutputRepository>();
             builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddHttpClient("JudgeAPI", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["JudgeApiUrl"]!);
+                client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.Timeout = TimeSpan.FromSeconds(20);
+            });
+            
             // Services
+            builder.Services.AddScoped<IJudgeService, JudgeService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
@@ -107,7 +116,16 @@ namespace ProjetoTccBackend
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+                options.IncludeXmlComments(xmlPath);
+                options.OperationFilter<SwaggerResponseExampleFilter>();
+                options.OperationFilter<ForceJsonOnlyOperationFilter>();
+            });
+            builder.Services.AddSwaggerExamples(Assembly.GetExecutingAssembly());
 
             builder.Services.AddAuthentication(options =>
             {
@@ -142,7 +160,16 @@ namespace ProjetoTccBackend
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SupportedSubmitMethods(new[]
+                    {
+                        Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Get,
+                        Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Post,
+                        Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Put,
+                        Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Delete
+                    });
+                });
                 app.UseDeveloperExceptionPage();
             }
 

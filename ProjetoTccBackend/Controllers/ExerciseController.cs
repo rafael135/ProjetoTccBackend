@@ -24,7 +24,7 @@ namespace ProjetoTccBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExerciseById(int id)
         {
-            Exercise? exercise = await this._exerciseService.GetExerciseById(id);
+            Exercise? exercise = await this._exerciseService.GetExerciseByIdAsync(id);
 
             if (exercise == null)
             {
@@ -39,7 +39,7 @@ namespace ProjetoTccBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewExercise([FromBody] CreateExerciseRequest request)
         {
-            Exercise? exercise = await this._exerciseService.CreateExercise(request);
+            Exercise? exercise = await this._exerciseService.CreateExerciseAsync(request);
 
             if (exercise == null)
             {

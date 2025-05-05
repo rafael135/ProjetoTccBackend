@@ -40,6 +40,11 @@ namespace ProjetoTccBackend.Repositories
             return this._dbContext.Set<T>().Find(id);
         }
 
+        public virtual T? GetById(string id)
+        {
+            return this._dbContext.Set<T>().Find(id);
+        }
+
         public virtual void Remove(T entity)
         {
             this._dbContext.Set<T>().Remove(entity);

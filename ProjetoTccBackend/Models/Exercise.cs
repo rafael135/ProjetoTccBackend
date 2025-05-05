@@ -14,6 +14,12 @@ namespace ProjetoTccBackend.Models
         public string Description { get; set; }
         public TimeSpan EstimatedTime { get; set; }
 
+        [StringLength(36, ErrorMessage = "UUID do exercício inválido")]
+        public string? JudgeUuid { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
 
         public ICollection<ExerciseInput> ExerciseInputs { get; set; } = [];
         public ICollection<ExerciseOutput> ExerciseOutputs { get; set; } = [];

@@ -5,8 +5,8 @@ namespace ProjetoTccBackend.Database.Requests.Group
 {
     public class CreateGroupRequest
     {
-        [Required(ErrorMessage = "Título é obrigatório")]
-        [JsonPropertyName("title")]
-        public string Title { get; set; }
+        [Required(ErrorMessage = "Nome é obrigatório")]
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
     }
 }

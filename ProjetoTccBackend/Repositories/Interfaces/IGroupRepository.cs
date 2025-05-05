@@ -4,5 +4,6 @@ namespace ProjetoTccBackend.Repositories.Interfaces
 {
     public interface IGroupRepository : IGenericRepository<Group>
     {
+
     }
 }

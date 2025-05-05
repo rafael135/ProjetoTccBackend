@@ -11,21 +11,36 @@ namespace ProjetoTccBackend.Services
         private readonly IExerciseRepository _exerciseRepository;
         private readonly IExerciseInputRepository _exerciseInputRepository;
         private readonly IExerciseOutputRepository _exerciseOutputRepository;
+        private readonly IJudgeService _judgeService;
+        private readonly ILogger<ExerciseService> _logger;
 
-        public ExerciseService(IExerciseRepository exerciseRepository, IExerciseInputRepository exerciseInputRepository, IExerciseOutputRepository exerciseOutputRepository)
+        public ExerciseService(IExerciseRepository exerciseRepository, IExerciseInputRepository exerciseInputRepository, IExerciseOutputRepository exerciseOutputRepository, IJudgeService judgeService, ILogger<ExerciseService> logger)
         {
             this._exerciseRepository = exerciseRepository;
-            _exerciseInputRepository = exerciseInputRepository;
-            _exerciseOutputRepository = exerciseOutputRepository;
+            this._exerciseInputRepository = exerciseInputRepository;
+            this._exerciseOutputRepository = exerciseOutputRepository;
+            this._judgeService = judgeService;
+            this._logger = logger;
         }
 
-        public async Task<Exercise> CreateExercise(CreateExerciseRequest request)
+        public async Task<Exercise> CreateExerciseAsync(CreateExerciseRequest request)
         {
+            string? judgeUuid = await this._judgeService.CreateJudgeExerciseAsync(request);
+
+            if (judgeUuid == null)
+            {
+                throw new ErrorException(new
+                {
+                    Message = "Não foi possível criar o exercício"
+                });
+            }
+
             var inputsRequest = request.Inputs.ToList();
             var outputsRequest = request.Outputs.ToList();
 
             Exercise exercise = new Exercise()
             {
+                JudgeUuid = judgeUuid,
                 Title = request.Title,
                 Description = request.Description,
                 EstimatedTime = request.EstimatedTime,
@@ -33,8 +48,8 @@ namespace ProjetoTccBackend.Services
 
             this._exerciseRepository.Add(exercise);
 
-            var inputs = new List<ExerciseInput>();
-            var outputs = new List<ExerciseOutput>();
+            List<ExerciseInput> inputs = new List<ExerciseInput>();
+            List<ExerciseOutput> outputs = new List<ExerciseOutput>();
 
             foreach (var input in inputsRequest)
             {
@@ -62,9 +77,9 @@ namespace ProjetoTccBackend.Services
             return exercise;
         }
 
-        public async Task<Exercise?> GetExerciseById(int id)
+        public async Task<Exercise?> GetExerciseByIdAsync(int id)
         {
-            var exercise = this._exerciseRepository.GetById(id);
+            Exercise? exercise = this._exerciseRepository.GetById(id);
             return exercise;
         }
     }
