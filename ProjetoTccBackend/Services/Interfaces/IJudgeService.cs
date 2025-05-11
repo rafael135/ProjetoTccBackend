@@ -23,7 +23,5 @@ namespace ProjetoTccBackend.Services.Interfaces
         Task<Exercise?> GetExerciseByUuidAsync(string judgeUuid);
 
         Task<ICollection<Exercise>> GetExercisesAsync();
-
-        Task<bool> CreateNewExerciseAsync(Exercise exercise);
     }
 }

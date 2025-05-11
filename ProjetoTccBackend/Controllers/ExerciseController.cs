@@ -20,7 +20,7 @@ namespace ProjetoTccBackend.Controllers
         }
 
 
-        [Authorize(Roles = "Admin,Teacher")]
+        //[Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExerciseById(int id)
         {
@@ -35,8 +35,8 @@ namespace ProjetoTccBackend.Controllers
         }
 
 
-        [Authorize(Roles = "Admin,Teacher")]
-        [HttpPost]
+        //[Authorize(Roles = "Admin,Teacher")]
+        [HttpPost()]
         public async Task<IActionResult> CreateNewExercise([FromBody] CreateExerciseRequest request)
         {
             Exercise? exercise = await this._exerciseService.CreateExerciseAsync(request);

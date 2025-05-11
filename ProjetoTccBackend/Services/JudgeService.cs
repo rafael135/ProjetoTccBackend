@@ -44,7 +44,8 @@ namespace ProjetoTccBackend.Services
             }
 
             return null;
-        }
+        }
+
         public async Task<Exercise?> GetExerciseByUuidAsync(string judgeUuid)
         {
             var judgeExercise = await this._httpClient.GetFromJsonAsync<JudgeExerciseResponse>($"/problems/{judgeUuid}");
@@ -60,11 +61,6 @@ namespace ProjetoTccBackend.Services
         }
 
         public Task<ICollection<Exercise>> GetExercisesAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> CreateNewExerciseAsync(Exercise exercise)
         {
             throw new NotImplementedException();
         }

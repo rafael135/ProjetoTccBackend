@@ -16,7 +16,7 @@ namespace ProjetoTccBackend.Integration.Test.DataBuilders
             {
                 Random random = new Random();
 
-                string ra = $"${random.NextInt64(100000, 9999999)}";
+                string ra = $"{random.NextInt64(100000, 9999999)}";
 
                 string firstName = u.Person.FirstName;
                 string lastName = u.Person.LastName;

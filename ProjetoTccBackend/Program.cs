@@ -84,14 +84,15 @@ namespace ProjetoTccBackend
             builder.Services.AddScoped<IExerciseInputRepository, ExerciseInputRepository>();
             builder.Services.AddScoped<IExerciseOutputRepository, ExerciseOutputRepository>();
             builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+            builder.Services.AddScoped<ICompetitionRepository, CompetitionRepository>();
 
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddHttpClient("JudgeAPI", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["JudgeApiUrl"]!);
-                client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+                //client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.Timeout = TimeSpan.FromSeconds(20);
             });
             
@@ -101,6 +102,7 @@ namespace ProjetoTccBackend
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
             builder.Services.AddScoped<IExerciseService, ExerciseService>();
+            builder.Services.AddScoped<ICompetitionService, CompetitionService>();
             builder.Services.AddScoped<IGroupAttemptService, GroupAttemptService>();
 
             builder.Services.AddSignalR();
@@ -112,6 +114,11 @@ namespace ProjetoTccBackend
             .ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.MaxDepth = 6;
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

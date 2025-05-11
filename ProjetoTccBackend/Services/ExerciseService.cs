@@ -56,6 +56,7 @@ namespace ProjetoTccBackend.Services
                 inputs.Add(new ExerciseInput()
                 {
                     ExerciseId = exercise.Id,
+                    JudgeUuid = judgeUuid,
                     Input = input.Input,
                 });
             }
@@ -68,6 +69,7 @@ namespace ProjetoTccBackend.Services
                 {
                     ExerciseId = exercise.Id,
                     ExerciseInputId = inputs[i].Id,
+                    JudgeUuid = judgeUuid,
                     Output = outputsRequest[i].Output
                 });
             }

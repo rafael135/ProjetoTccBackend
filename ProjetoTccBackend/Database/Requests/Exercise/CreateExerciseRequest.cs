@@ -17,7 +17,10 @@ namespace ProjetoTccBackend.Database.Requests.Exercise
         [JsonPropertyName("estimatedTime")]
         public TimeSpan EstimatedTime { get; set; }
 
+        [JsonPropertyName("inputs")]
         public ICollection<ExerciseInputRequest> Inputs { get; set; }
+
+        [JsonPropertyName("outputs")]
         public ICollection<ExerciseOutputRequest> Outputs { get; set; }
 
     }

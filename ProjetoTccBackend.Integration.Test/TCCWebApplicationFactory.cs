@@ -11,7 +11,11 @@ namespace ProjetoTccBackend.Integration.Test
 {
     public class TCCWebApplicationFactory : WebApplicationFactory<ProjetoTccBackend>, IAsyncLifetime
     {
-        private readonly MariaDbContainer _dbContainer;
+        public readonly MariaDbContainer _dbContainer;
+        private IServiceProvider _serviceProvider;
+        private IServiceScope _scope;
+        public TccDbContext Context { get; private set; }
+
 
         public TCCWebApplicationFactory()
         {
@@ -38,6 +42,12 @@ namespace ProjetoTccBackend.Integration.Test
             await _dbContainer.DisposeAsync();
         }
 
+        public TccDbContext GetDbContext()
+        {
+            this._scope = this.Services.CreateScope();
+            return this._scope.ServiceProvider.GetRequiredService<TccDbContext>();
+        }
+
         // Configures the WebHost to use the container ConnectionString
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -55,7 +65,6 @@ namespace ProjetoTccBackend.Integration.Test
 
             builder.ConfigureServices(services =>
             {
-                
                 var serviceProvider = services.BuildServiceProvider();
                 using (var scope = serviceProvider.CreateScope())
                 {
