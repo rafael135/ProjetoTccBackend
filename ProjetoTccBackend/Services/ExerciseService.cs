@@ -23,6 +23,7 @@ namespace ProjetoTccBackend.Services
             this._logger = logger;
         }
 
+        /// <inheritdoc/>
         public async Task<Exercise> CreateExerciseAsync(CreateExerciseRequest request)
         {
             string? judgeUuid = await this._judgeService.CreateJudgeExerciseAsync(request);
@@ -79,6 +80,7 @@ namespace ProjetoTccBackend.Services
             return exercise;
         }
 
+        /// <inheritdoc/>
         public async Task<Exercise?> GetExerciseByIdAsync(int id)
         {
             Exercise? exercise = this._exerciseRepository.GetById(id);

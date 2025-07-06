@@ -1,4 +1,5 @@
-﻿using ProjetoTccBackend.Database.Requests.Exercise;
+﻿using ProjetoTccBackend.Database.Requests.Competition;
+using ProjetoTccBackend.Database.Requests.Exercise;
 using ProjetoTccBackend.Models;
 
 namespace ProjetoTccBackend.Services.Interfaces
@@ -23,5 +24,7 @@ namespace ProjetoTccBackend.Services.Interfaces
         Task<Exercise?> GetExerciseByUuidAsync(string judgeUuid);
 
         Task<ICollection<Exercise>> GetExercisesAsync();
+
+        Task SendGroupExerciseAttempt(GroupExerciseAttemptRequest request);
     }
 }

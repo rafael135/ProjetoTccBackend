@@ -26,5 +26,6 @@ namespace ProjetoTccBackend.Models
         public ICollection<Competition> Competitions { get; set; } = [];
         public ICollection<ExerciseInCompetition> ExerciseInCompetions { get; set; } = [];
         public ICollection<GroupExerciseAttempt> GroupExerciseAttempts { get; set; } = [];
+        public ICollection<Question> Questions { get; set; } = [];
     }
 }

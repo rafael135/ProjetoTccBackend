@@ -23,6 +23,7 @@ namespace ProjetoTccBackend.Services
             this._logger = logger;
         }
 
+        /// <inheritdoc/>
         public async Task<Group> CreateGroupAsync(CreateGroupRequest groupRequest)
         {
             User loggedUser = this._userService.GetHttpContextLoggerUser();
@@ -43,7 +44,9 @@ namespace ProjetoTccBackend.Services
             this._userRepository.Update(loggedUser);
 
             return await Task.FromResult(newGroup);
-        }
+        }
+
+        /// <inheritdoc/>
         public Group? ChangeGroupName(ChangeGroupNameRequest groupRequest)
         {
             User loggedUser = this._userService.GetHttpContextLoggerUser();
@@ -65,6 +68,7 @@ namespace ProjetoTccBackend.Services
             return group;
         }
 
+        /// <inheritdoc/>
         public Group? GetGroupById(int id)
         {
             User loggedUser = this._userService.GetHttpContextLoggerUser();

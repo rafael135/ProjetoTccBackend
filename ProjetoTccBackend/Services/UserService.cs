@@ -28,6 +28,7 @@ public class UserService : IUserService
         _logger = logger;
     }
 
+    /// <inheritdoc/>
     public User GetHttpContextLoggerUser()
     {
         var user = this._httpContextAccessor.HttpContext?.User;
@@ -52,7 +53,9 @@ public class UserService : IUserService
         }
 
         return loggedUser;
-    }
+    }
+
+    /// <inheritdoc/>
     public async Task<User> RegisterUserAsync(RegisterUserRequest user)
     {
         User? existentUser = this._userRepository.GetByEmail(user.Email);
@@ -64,6 +67,14 @@ public class UserService : IUserService
                 {
                     { "email", """E-mail já utilizado""" }
                 });
+        }
+
+        if(user.Role.Equals("Admin"))
+        {
+            throw new FormException(new Dictionary<string, string>()
+            {
+                { "general", "Não foi possível criar o usuário" }
+            });
         }
 
         User newUser = new User
@@ -103,7 +114,9 @@ public class UserService : IUserService
         }
 
         return newUser;
-    }
+    }
+
+    /// <inheritdoc/>
     public async Task<User> LoginUserAsync(LoginUserRequest usr)
     {
         //Console.WriteLine($"{dto.Email}, {dto.Password}");

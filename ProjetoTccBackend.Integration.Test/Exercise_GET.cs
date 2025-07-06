@@ -77,7 +77,7 @@ namespace ProjetoTccBackend.Integration.Test
         [Fact]
         public async Task GetExerciseById_Returns_NotFoundStatus()
         {
-            // Arrang
+            // Arrange
             HttpStatusCode expectedStatus = HttpStatusCode.NotFound;
 
             // Act

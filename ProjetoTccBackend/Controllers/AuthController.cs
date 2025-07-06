@@ -82,7 +82,7 @@ namespace ProjetoTccBackend.Controllers
         {
             var user = await this._userService.RegisterUserAsync(request);
 
-            string jwtToken = this._tokenService.GenerateToken(user);
+            string jwtToken = this._tokenService.GenerateUserToken(user);
 
             UserResponse userResponse = new UserResponse()
             {
@@ -158,7 +158,7 @@ namespace ProjetoTccBackend.Controllers
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed
             };
 
-            string jwtToken = this._tokenService.GenerateToken(user);
+            string jwtToken = this._tokenService.GenerateUserToken(user);
 
             return Ok(new
             {

@@ -15,6 +15,7 @@ namespace ProjetoTccBackend.Services
             this._competitionRepository = competitionRepository;
         }
 
+        /// <inheritdoc/>
         public async Task<Competition> CreateCompetition(CompetitionRequest request)
         {
             Competition? existentCompetition = this._competitionRepository.Find(c => c.StartTime.Date.Equals(request.StartTime.Date)).FirstOrDefault();
@@ -35,6 +36,7 @@ namespace ProjetoTccBackend.Services
             return newCompetition;
         }
 
+        /// <inheritdoc/>
         public async Task<Competition?> GetExistentCompetition()
         {
             Competition? existentCompetition = this._competitionRepository.Find(c => c.StartTime.Ticks > DateTime.Now.Ticks).FirstOrDefault();

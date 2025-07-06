@@ -16,7 +16,7 @@ namespace ProjetoTccBackend.Models
         public int ExerciseInputId { get; set; }
         public ExerciseInput ExerciseInput { get; set; }
 
-        [DataType(DataType.MultilineText)]
+        [DataType(DataType.Text)]
         public string Output { get; set; }
     }
 }
