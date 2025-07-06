@@ -126,7 +126,20 @@ namespace ProjetoTccBackend.Database
                 .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired(required: false);
 
+            builder.Entity<User>()
+                .HasMany(u => u.Questions)
+                .WithOne(q => q.User)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
             
+            builder.Entity<Competition>()
+                .HasMany(c => c.Questions)
+                .WithOne(q => q.Competition)
+                .HasForeignKey(q => q.CompetitionId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(required: true);
+                
         }
 
 

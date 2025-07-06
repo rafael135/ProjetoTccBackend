@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjetoTccBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class LanguageTypesAndQuestions : Migration
+    public partial class QuestionUserCompetitionRelationshipAndLanguageTypes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,8 +46,11 @@ namespace ProjetoTccBackend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CompetitionId = table.Column<int>(type: "int", nullable: false),
                     TargetQuestionId = table.Column<int>(type: "int", nullable: true),
                     ExerciseId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Content = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     QuestionType = table.Column<int>(type: "int", nullable: false)
@@ -55,6 +58,18 @@ namespace ProjetoTccBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Questions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Questions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Questions_Competitions_CompetitionId",
+                        column: x => x.CompetitionId,
+                        principalTable: "Competitions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Questions_Exercises_ExerciseId",
                         column: x => x.ExerciseId,
@@ -70,6 +85,11 @@ namespace ProjetoTccBackend.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Questions_CompetitionId",
+                table: "Questions",
+                column: "CompetitionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questions_ExerciseId",
                 table: "Questions",
                 column: "ExerciseId");
@@ -78,6 +98,11 @@ namespace ProjetoTccBackend.Migrations
                 name: "IX_Questions_TargetQuestionId",
                 table: "Questions",
                 column: "TargetQuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Questions_UserId",
+                table: "Questions",
+                column: "UserId");
         }
 
         /// <inheritdoc />

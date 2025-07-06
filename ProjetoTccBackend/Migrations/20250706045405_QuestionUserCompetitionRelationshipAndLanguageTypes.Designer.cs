@@ -12,8 +12,8 @@ using ProjetoTccBackend.Database;
 namespace ProjetoTccBackend.Migrations
 {
     [DbContext(typeof(TccDbContext))]
-    [Migration("20250706030409_LanguageTypesAndQuestions")]
-    partial class LanguageTypesAndQuestions
+    [Migration("20250706045405_QuestionUserCompetitionRelationshipAndLanguageTypes")]
+    partial class QuestionUserCompetitionRelationshipAndLanguageTypes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -404,6 +404,9 @@ namespace ProjetoTccBackend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CompetitionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -417,11 +420,19 @@ namespace ProjetoTccBackend.Migrations
                     b.Property<int?>("TargetQuestionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CompetitionId");
 
                     b.HasIndex("ExerciseId");
 
                     b.HasIndex("TargetQuestionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Questions");
                 });
@@ -669,6 +680,12 @@ namespace ProjetoTccBackend.Migrations
 
             modelBuilder.Entity("ProjetoTccBackend.Models.Question", b =>
                 {
+                    b.HasOne("ProjetoTccBackend.Models.Competition", "Competition")
+                        .WithMany("Questions")
+                        .HasForeignKey("CompetitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ProjetoTccBackend.Models.Exercise", "Exercise")
                         .WithMany("Questions")
                         .HasForeignKey("ExerciseId")
@@ -678,9 +695,19 @@ namespace ProjetoTccBackend.Migrations
                         .WithMany()
                         .HasForeignKey("TargetQuestionId");
 
+                    b.HasOne("ProjetoTccBackend.Models.User", "User")
+                        .WithMany("Questions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Competition");
+
                     b.Navigation("Exercise");
 
                     b.Navigation("TargetQuestion");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ProjetoTccBackend.Models.User", b =>
@@ -703,6 +730,8 @@ namespace ProjetoTccBackend.Migrations
                     b.Navigation("GroupExerciseAttempts");
 
                     b.Navigation("GroupInCompetitions");
+
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("ProjetoTccBackend.Models.Exercise", b =>
@@ -733,6 +762,11 @@ namespace ProjetoTccBackend.Migrations
                     b.Navigation("GroupInCompetitions");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("ProjetoTccBackend.Models.User", b =>
+                {
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }
