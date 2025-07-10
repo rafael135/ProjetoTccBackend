@@ -31,7 +31,8 @@ namespace ProjetoTccBackend.Integration.Test
                 UserName = "teste",
                 Email = "teste@gmail.com",
                 Password = password,
-                JoinYear = 2020
+                JoinYear = 2020,
+                Role = "Student"
             };
 
             await this._client.PostAsJsonAsync<RegisterUserRequest>("/api/auth/register", request);
@@ -57,7 +58,8 @@ namespace ProjetoTccBackend.Integration.Test
                 UserName = userName,
                 Email = email,
                 JoinYear = joinYear,
-                Password = password
+                Password = password,
+                Role = "Student"
             };
 
             // Act

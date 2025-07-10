@@ -1,5 +1,6 @@
 ﻿using ProjetoTccBackend.Database.Requests.Competition;
 using ProjetoTccBackend.Database.Responses.Competition;
+using ProjetoTccBackend.Enums.Judge;
 using ProjetoTccBackend.Exceptions.Judge;
 using ProjetoTccBackend.Services.Interfaces;
 
@@ -8,61 +9,40 @@ namespace ProjetoTccBackend.Services
     public class GroupAttemptService : IGroupAttemptService
     {
         private readonly IJudgeService _judgeService;
+        private readonly IUserService _userService;
 
-        public GroupAttemptService(IJudgeService judgeService)
+        public GroupAttemptService(IJudgeService judgeService, IUserService userService)
         {
             this._judgeService = judgeService;
+            this._userService = userService;
         }
 
         /// <inheritdoc/>
         public async Task<ExerciseSubmissionResponse> SubmitExerciseAttempt(GroupExerciseAttemptRequest request)
         {
-            throw new NotImplementedException();
+            var loggedUser = this._userService.GetHttpContextLoggerUser();
+
+            if(loggedUser is null || loggedUser.GroupId is null)
+            {
+                throw new UnauthorizedAccessException("Usuário não possui permissão para essa ação");
+            }
+
 
             try
             {
-                await this._judgeService.SendGroupExerciseAttempt(request);
+                var response = await this._judgeService.SendGroupExerciseAttempt(request);
 
                 return new ExerciseSubmissionResponse()
                 {
-                    ExerciseId = request.ExerciseId
+                    ExerciseId = request.ExerciseId,
+                    Accepted = response.Equals(JudgeSubmissionResponse.Accepted),
+                    JudgeResponse = response,
+                    GroupId = loggedUser.GroupId.Value,
                 };
             }
-            catch (ExerciseNotFoundException ex)
+            catch (Exception ex)
             {
-
-            }
-            catch (JudgeSubmissionException ex)
-            {
-
-            }
-            catch (JudgePresentationException ex)
-            {
-
-            }
-            catch (JudgeWrongAnswerException ex)
-            {
-
-            }
-            catch (JudgeCompilationException ex)
-            {
-
-            }
-            catch (JudgeTimeLimitException ex)
-            {
-
-            }
-            catch (JudgeMemoryLimitException ex)
-            {
-
-            }
-            catch (JudgeRuntimeException ex)
-            {
-
-            }
-            catch (JudgeSecurityException ex)
-            {
-
+                throw new JudgeException(ex.Message, ex.Data);
             }
         }
 

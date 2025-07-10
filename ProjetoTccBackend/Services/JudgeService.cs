@@ -7,6 +7,7 @@ using ProjetoTccBackend.Database.Requests.Exercise;
 using ProjetoTccBackend.Database.Requests.Judge;
 using System.Net;
 using ProjetoTccBackend.Database.Requests.Competition;
+using JudgeSubmissionResponseEnum = ProjetoTccBackend.Enums.Judge.JudgeSubmissionResponse;
 
 namespace ProjetoTccBackend.Services
 {
@@ -24,12 +25,25 @@ namespace ProjetoTccBackend.Services
         /// <inheritdoc/>
         public async Task<string?> CreateJudgeExerciseAsync(CreateExerciseRequest exerciseRequest)
         {
+            var exerciseInputs = exerciseRequest.Inputs.ToList();
+            var exerciseOutputs = exerciseRequest.Outputs.ToList();
+
+            List<string> inputs = new List<string>();
+            List<string> outputs = new List<string>();
+
+            for(int i = 0; i < exerciseRequest.Inputs.Count; i++)
+            {
+                inputs.Add(exerciseInputs[i].Input);
+                outputs.Add(exerciseOutputs[i].Output);
+            }
+
+
             CreateJudgeExerciseRequest payload = new CreateJudgeExerciseRequest()
             {
                 Name = exerciseRequest.Title,
                 Description = exerciseRequest.Description,
-                DataEntry = exerciseRequest.Inputs.ToList()[0].Input,
-                DataOutput = exerciseRequest.Outputs.ToList()[0].Output,
+                DataEntry = inputs,
+                DataOutput = outputs,
                 EntryDescription = "",
                 OutputDescription = ""
             };
@@ -71,7 +85,7 @@ namespace ProjetoTccBackend.Services
         }
 
         /// <inheritdoc/>
-        public async Task SendGroupExerciseAttempt(GroupExerciseAttemptRequest request)
+        public async Task<JudgeSubmissionResponseEnum> SendGroupExerciseAttempt(GroupExerciseAttemptRequest request)
         {
             Exercise? exercise = this._exerciseRepository.GetById(request.ExerciseId);
 
@@ -114,23 +128,23 @@ namespace ProjetoTccBackend.Services
             switch(judgeSubmissionResponse!.Status)
             {
                 case "ACCEPTED":
-                    return;
+                    return JudgeSubmissionResponseEnum.Accepted;
                 case "PRESENTATION ERROR":
-                    throw new JudgePresentationException();
+                    return JudgeSubmissionResponseEnum.PresentationError;
                 case "WRONG ANSWER":
-                    throw new JudgeWrongAnswerException();
+                    return JudgeSubmissionResponseEnum.WrongAnswer;
                 case "COMPILATION ERROR":
-                    throw new JudgeCompilationException();
+                    return JudgeSubmissionResponseEnum.CompilationError;
                 case "TIME LIMIT EXCEEDED":
-                    throw new JudgeTimeLimitException();
+                    return JudgeSubmissionResponseEnum.TimeLimitExceeded;
                 case "MEMORY LIMIT EXCEEDED":
-                    throw new JudgeMemoryLimitException();
+                    return JudgeSubmissionResponseEnum.MemoryLimitExceeded;
                 case "RUNTIME ERROR":
-                    throw new JudgeRuntimeException();
+                    return JudgeSubmissionResponseEnum.RuntimeError;
                 case "SECURITY ERROR":
-                    throw new JudgeSecurityException();
+                    return JudgeSubmissionResponseEnum.SecurityError;
                 default:
-                    throw new JudgeWrongAnswerException();
+                    return JudgeSubmissionResponseEnum.WrongAnswer;
             }
         }
     }

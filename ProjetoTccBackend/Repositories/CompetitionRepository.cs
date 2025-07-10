@@ -1,7 +1,7 @@
-﻿using ProjetoTccBackend.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjetoTccBackend.Database;
 using ProjetoTccBackend.Models;
 using ProjetoTccBackend.Repositories.Interfaces;
-using System.Linq.Expressions;
 
 namespace ProjetoTccBackend.Repositories
 {
@@ -9,6 +9,20 @@ namespace ProjetoTccBackend.Repositories
     {
         public CompetitionRepository(TccDbContext dbContext) : base(dbContext)
         {
+            
         }
+
+        /// <inheritdoc/>
+        public async Task<ICollection<Question>> GetCompetitionQuestions(int competitionId)
+        {
+            List<Question> questionList = await this._dbContext.Competitions
+                .Where(c => c.Id.Equals(competitionId))
+                .SelectMany(c => c.Questions)
+                .ToListAsync();
+
+            return questionList;
+        }
+
+        
     }
 }

@@ -52,10 +52,10 @@ namespace ProjetoTccBackend.Database
                 .UsingEntity<GroupInCompetition>(e => e.Property(p => p.CreatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP"));
 
             // CompetitionRanking - Competition
-            builder.Entity<CompetitionRanking>()
-                .HasOne<Competition>(c => c.Competition)
-                .WithOne(c => c.CompetitionRanking)
-                .HasForeignKey<CompetitionRanking>(c => c.CompetitionId)
+            builder.Entity<Competition>()
+                .HasMany(c => c.CompetitionRankings)
+                .WithOne(cr => cr.Competition)
+                .HasForeignKey(cr => cr.CompetitionId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(required: true);
 

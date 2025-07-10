@@ -1,6 +1,7 @@
 ﻿using ProjetoTccBackend.Database.Requests.Competition;
 using ProjetoTccBackend.Database.Requests.Exercise;
 using ProjetoTccBackend.Models;
+using JudgeSubmissionResponseEnum = ProjetoTccBackend.Enums.Judge.JudgeSubmissionResponse;
 
 namespace ProjetoTccBackend.Services.Interfaces
 {
@@ -25,6 +26,6 @@ namespace ProjetoTccBackend.Services.Interfaces
 
         Task<ICollection<Exercise>> GetExercisesAsync();
 
-        Task SendGroupExerciseAttempt(GroupExerciseAttemptRequest request);
+        Task<JudgeSubmissionResponseEnum> SendGroupExerciseAttempt(GroupExerciseAttemptRequest request);
     }
 }

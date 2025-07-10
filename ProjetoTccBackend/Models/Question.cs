@@ -14,8 +14,15 @@ namespace ProjetoTccBackend.Models
         [Key]
         public int Id { get; set; }
 
+        /// <summary>
+        /// Identifier of the competition to which this question belongs.
+        /// </summary>
         public required int CompetitionId { get; set; }
-        public Competition Competition { get; set; }
+
+        /// <summary>
+        /// Reference to the competition to which this question belongs.
+        /// </summary>
+        public Competition Competition { get; }
 
         /// <summary>  
         /// Target question identifier, if any.  
@@ -37,7 +44,14 @@ namespace ProjetoTccBackend.Models
         /// </summary>  
         public Exercise? Exercise { get; set; } = null;
 
+        /// <summary>
+        /// Identifier of the user who created the question.
+        /// </summary>
         public required string UserId { get; set; }
+
+        /// <summary>
+        /// Reference to the user who created the question.
+        /// </summary>
         public User User { get; }
 
         /// <summary>  
